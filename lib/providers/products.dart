@@ -67,9 +67,11 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> addProduct(Product product) {
+  Future<void> addProduct(Product product) async{
     const url = 'YOUR REST API ENDPOINT URL';
-    return http
+
+    try{
+      var response =  await http
         .post(
       url,
       body: json.encode({
@@ -79,8 +81,8 @@ class Products with ChangeNotifier {
         'price': product.price,
         'isFavourite': product.isFavorite,
       }),
-    )
-        .then((response) {
+    );
+        
       final newProduct = Product(
         title: product.title,
         description: product.description,
@@ -91,10 +93,10 @@ class Products with ChangeNotifier {
       _items.add(newProduct);
       // _items.insert(0, newProduct); // at the start of the list
       notifyListeners();
-    }).catchError((error) {
+    }catch(error){
       print(error);
       throw error;
-    });
+    }
   }
 
   void updateProduct(String id, Product newProduct) {
