@@ -9,27 +9,33 @@ import './edit_product_screen.dart';
 class UserProductsScreen extends StatelessWidget {
   static const routeName = '/user-products';
 
+  Future<void> _onRefreshProducts(BuildContext context) async{
+    await Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+  }
+
   @override
   Widget build(BuildContext context) {
     final productsData = Provider.of<Products>(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Your Products'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              Navigator.of(context).pushNamed(EditProductScreen.routeName);
-            },
-          ),
-        ],
-      ),
-      drawer: AppDrawer(),
-      body: Padding(
-        padding: EdgeInsets.all(8),
-        child: ListView.builder(
-          itemCount: productsData.items.length,
-          itemBuilder: (_, i) => Column(
+        appBar: AppBar(
+          title: const Text('Your Products'),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                Navigator.of(context).pushNamed(EditProductScreen.routeName);
+              },
+            ),
+          ],
+        ),
+        drawer: AppDrawer(),
+        body: RefreshIndicator(
+          onRefresh: () => _onRefreshProducts(context),
+          child: Padding(
+            padding: EdgeInsets.all(8),
+            child: ListView.builder(
+              itemCount: productsData.items.length,
+              itemBuilder: (_, i) => Column(
                 children: [
                   UserProductItem(
                     productsData.items[i].id,
@@ -39,8 +45,8 @@ class UserProductsScreen extends StatelessWidget {
                   Divider(),
                 ],
               ),
-        ),
-      ),
-    );
+            ),
+          ),
+        ));
   }
 }
