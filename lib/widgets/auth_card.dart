@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -21,7 +23,7 @@ class _AuthCardState extends State<AuthCard> {
   var _isLoading = false;
   final _passwordController = TextEditingController();
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!_formKey.currentState.validate()) {
       // Invalid!
       return;
@@ -34,6 +36,10 @@ class _AuthCardState extends State<AuthCard> {
       // Log user in
     } else {
       // Sign user up
+      await Provider.of<Auth>(context, listen: false).signup(
+        _authData['email'],
+        _authData['password'],
+      );
     }
     setState(() {
       _isLoading = false;
@@ -91,7 +97,7 @@ class _AuthCardState extends State<AuthCard> {
                   validator: (value) {
                     if (value.isEmpty || value.length < 5) {
                       return 'Password is too short!';
-                    }else {
+                    } else {
                       return null;
                     }
                   },
@@ -101,28 +107,28 @@ class _AuthCardState extends State<AuthCard> {
                 ),
                 if (_authMode == AuthMode.Signup)
                   TextFormField(
-                    enabled: _authMode == AuthMode.Signup,
-                    decoration: InputDecoration(labelText: 'Confirm Password'),
-                    obscureText: true,
-                    // validator: _authMode == AuthMode.Signup
-                    //     ? (value) {
-                    //         if (value != _passwordController.text) {
-                    //           return 'Passwords do not match!';
-                    //         }
-                    //       }
-                    //     : null,
-                    validator: (value) {
-                      if(_authMode == AuthMode.Signup){
-                        if(value != _passwordController.text) {
-                          return 'Passwords do not match!';
-                        }else{
+                      enabled: _authMode == AuthMode.Signup,
+                      decoration:
+                          InputDecoration(labelText: 'Confirm Password'),
+                      obscureText: true,
+                      // validator: _authMode == AuthMode.Signup
+                      //     ? (value) {
+                      //         if (value != _passwordController.text) {
+                      //           return 'Passwords do not match!';
+                      //         }
+                      //       }
+                      //     : null,
+                      validator: (value) {
+                        if (_authMode == AuthMode.Signup) {
+                          if (value != _passwordController.text) {
+                            return 'Passwords do not match!';
+                          } else {
+                            return null;
+                          }
+                        } else {
                           return null;
                         }
-                      }else{
-                        return null;
-                      }
-                    }
-                  ),
+                      }),
                 SizedBox(
                   height: 20,
                 ),
