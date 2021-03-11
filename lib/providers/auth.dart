@@ -55,7 +55,18 @@ class Auth with ChangeNotifier {
     return _authenticate(email, password, "signUp");
   }
 
+<<<<<<< HEAD
   Future<void> login(String email, String password) async {
     return _authenticate(email, password, "signInWithPassword");
+=======
+  Future<void> signup(String email, String password) async{
+    const url = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=[API KEY]";
+    final response = await http.post(url, body: json.encode({
+      'email': email,
+      'password': password,
+      'returnSecureToken': true,
+    }));
+    print(json.decode(response.body));
+>>>>>>> 4ed4757d3cbd8ea1d172b71d0079df29eaf9ac60
   }
 }
