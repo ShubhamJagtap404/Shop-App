@@ -20,7 +20,7 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _showOnlyFavorites = false;
-  var _isInit = false;
+  var _isInit = true;
   var _isLoading = false;
 
   @override
@@ -36,17 +36,17 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
 
   @override
   void didChangeDependencies() {
-    setState(() {
-      _isLoading = true;
-    });
-    if (!_isInit) {
+    if (_isInit) {
+      setState(() {
+        _isLoading = true;
+      });
       Provider.of<Products>(context).fetchAndSetProducts().then((_) {
         setState(() {
           _isLoading = false;
         });
       });
     }
-    _isInit = true;
+    _isInit = false;
     super.didChangeDependencies();
   }
 

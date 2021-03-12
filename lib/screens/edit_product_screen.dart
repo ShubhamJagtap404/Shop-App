@@ -32,7 +32,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     'imageUrl': '',
   };
   var _isInit = true;
-  var isLoading = false;
+  var _isLoading = false;
 
   @override
   void initState() {
@@ -91,7 +91,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
     _form.currentState.save();
     setState(() {
-      isLoading = true;
+      _isLoading = true;
     });
     if (_editedProduct.id != null) {
       await Provider.of<Products>(context, listen: false)
@@ -126,7 +126,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       // }
     }
     setState(() {                    
-        isLoading = false;
+        _isLoading = false;
       });
       Navigator.of(context).pop();
       /*As there are three await statements in sequence. 
@@ -145,7 +145,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           ),
         ],
       ),
-      body: isLoading
+      body: _isLoading
           ? Center(
               child: CircularProgressIndicator(
                 semanticsLabel: "Loading Products ...",

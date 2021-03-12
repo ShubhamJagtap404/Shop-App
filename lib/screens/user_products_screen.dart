@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopApp/models/product.dart';
 
 import '../providers/products.dart';
 import '../widgets/user_product_item.dart';
@@ -9,8 +10,9 @@ import './edit_product_screen.dart';
 class UserProductsScreen extends StatelessWidget {
   static const routeName = '/user-products';
 
-  Future<void> _onRefreshProducts(BuildContext context) async{
-    await Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+  Future<void> _onRefreshProducts(BuildContext context) async {
+    await Provider.of<Products>(context, listen: false)
+        .fetchAndSetProducts(true);
   }
 
   @override
@@ -29,24 +31,34 @@ class UserProductsScreen extends StatelessWidget {
           ],
         ),
         drawer: AppDrawer(),
-        body: RefreshIndicator(
-          onRefresh: () => _onRefreshProducts(context),
-          child: Padding(
-            padding: EdgeInsets.all(8),
-            child: ListView.builder(
-              itemCount: productsData.items.length,
-              itemBuilder: (_, i) => Column(
-                children: [
-                  UserProductItem(
-                    productsData.items[i].id,
-                    productsData.items[i].title,
-                    productsData.items[i].imageUrl,
-                  ),
-                  Divider(),
-                ],
+        body: FutureBuilder(
+          future: _onRefreshProducts(context),
+          builder: (ctx, snapshot) =>
+              snapshot.connectionState == ConnectionState.waiting
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : RefreshIndicator(
+                      onRefresh: () => _onRefreshProducts(context),
+                      child: Consumer<Products>(
+                        builder: (ctx, productData, _) => Padding(
+                          padding: EdgeInsets.all(8),
+                          child: ListView.builder(
+                            itemCount: productsData.items.length,
+                            itemBuilder: (_, i) => Column(
+                              children: [
+                                UserProductItem(
+                                  productsData.items[i].id,
+                                  productsData.items[i].title,
+                                  productsData.items[i].imageUrl,
+                                ),
+                                Divider(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
               ),
-            ),
-          ),
         ));
   }
 }

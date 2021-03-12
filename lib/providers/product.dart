@@ -26,23 +26,25 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleFavoriteStatus() async {
+  Future<void> toggleFavoriteStatus(String authToken,String userId) async {
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
-    final url = 'YOUR REST API ENPOINT URL /products/$id.json';
-
-    final response = await http.patch(
-      url,
-      body: json.encode(
-        {
-          'isFavorite': isFavorite,
-        },
-      ),
-    );
-    if (response.statusCode >= 400) {
+    final url = 'https://[PROJECT_ID].firebaseio.com/userFavorites/$userId/$id.json?auth=$authToken';
+    try{
+      final response = await http.put(
+        url,
+        body: json.encode(
+            isFavorite
+        ),
+      );
+      if (response.statusCode >= 400) {
+        _setFavStatus(oldStatus);
+        throw HttpException("Could not toggle the favorite status");
+      }
+    }catch(error) {
       _setFavStatus(oldStatus);
-      throw HttpException("Could not toggle the favorite status");
     }
+
   }
 }
